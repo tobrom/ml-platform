@@ -1,0 +1,65 @@
+---
+title: "Summary Report"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: pdf_document
+tables: true
+params:
+  m: NA
+  ncol: NA
+  trainset: NA
+  bestmodel: NA
+  bestaccuracy: NA
+  prediction: NA
+  usedModel: NA
+  data: NA
+  dataPred: NA
+  colors: NA
+  
+---
+
+## Overview of the Data Science Process
+
+The analyzed data consisted of `r params$ncol` columns  and `r params$m` observations. The initial data set
+was split into a training set and test set based on a `r params$trainset`-`r 100-params$trainset` split. After some 
+exploratoty data analysis including Principal Components Analysis and various scatterplots, the training data was cross validated
+with a 10-fold cross validation process in order to get an understanding of the bias-variance dynamic´s for the training set. 
+For some of the models, the cross validation process was also performed over a number of parameter values in order to find 
+the optimal parameters for the respective models. 
+
+
+After the optimal parameters were found through the cross validation, all the 
+relevant models were tested and ranked based on the accuracy on the test set. 
+It turned out that the `r params$bestmodel` was the
+best model with an accuracy of `r params$bestaccuracy` % on the test set.
+
+
+
+
+```{r iris1, fig.width = 10, fig.height = 4, fig.align= "right", echo = FALSE}
+
+ggplot(params$data, aes(x = reorder(Model, -Accuracy), y = Accuracy*100, fill = reorder(Model, -Accuracy))) +
+                    geom_bar(stat = "identity", width = 0.5) +
+                    labs(x = "", y = "Accuracy (%)") +
+                    geom_text(aes(label = paste(format(round(Accuracy*100, 2), nsmall = 2), "%")), vjust = -1) +
+                    scale_fill_manual(values = params$colors[1:nrow(params$data)]) +
+                    scale_x_discrete(labels = function(x) str_wrap(x, width = 13)) +
+                    coord_cartesian(ylim = c(0, 105)) + 
+                    theme(panel.background = element_blank(),
+                          plot.background = element_blank(),
+                          axis.text.x = element_text(size = 12),
+                          legend.position = "none",
+                          panel.grid.major.y = element_line(colour = "grey", size = 0.1, linetype = 20))
+
+
+
+```
+
+
+## Prediction Results
+
+After evaluating the different models, the  `r params$usedModel` was chosen to make a prediction. Based  on the 
+input values **`r params$dataPred`** , the model predicted the class: **`r params$prediction`**.  
+
+
+
+
